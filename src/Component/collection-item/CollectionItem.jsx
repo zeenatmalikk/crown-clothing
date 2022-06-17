@@ -1,7 +1,6 @@
 import React from "react";
 import "./CollectionItem.scss";
 const CollectionItem = ({ id, name, price, imageUrl }) => {
-    console.log('img',imageUrl);
   return (
     <div className='collection-item'>
     <div
