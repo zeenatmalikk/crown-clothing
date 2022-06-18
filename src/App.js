@@ -4,21 +4,33 @@ import HomePagecomponent from "./Page/homepage/HomePage.component";
 import Shop from "./Page/shop/Shop";
 import Header from "./Component/Header/Header";
 import SignInSignUp from "./Page/SignIn-SignUp Page/SignInSignUp";
-import { auth } from "./Component/Firebase/Firebase.utils";
+import {
+  auth,
+  createUserProfileDocument,
+} from "./Component/Firebase/Firebase.utils";
 import { useEffect, useState } from "react";
+import { onSnapshot } from "firebase/firestore";
 
 function App() {
   const [currentUser, setcurrentUser] = useState(null);
-  const unsubscribeFromAuth =()=> null;
+  // const unsubscribeFromAuth =()=> null;
+
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setcurrentUser(user);
-      console.log(user);
+    auth.onAuthStateChanged(async (userAuth) => {
+      // setcurrentUser(userAuth);
+
+      if (userAuth) {
+        const colRef = await createUserProfileDocument(userAuth);
+
+        onSnapshot(colRef, (snap) => {
+          snap.docs.forEach((doc) => {
+            setcurrentUser({ id: doc.id, ...doc.data() });
+            console.log("cu", currentUser);
+          });
+        });
+      }
+      setcurrentUser(userAuth);
     });
-    return () => {
-    // unsubscribeFromAuth();
-    console.log('unmount');
-    };
   }, []);
   return (
     <div>
